@@ -84,6 +84,7 @@ var fillFirstPictureElementWithDescription = function (firstElementArr) {
 fillFirstPictureElementWithDescription(generatePictureDescriptions()[0]);
 socialCommentsCount.classList.add('visually-hidden');
 commentsLoader.classList.add('visually-hidden');
+<<<<<<< HEAD
 
 //module4-task2
 //part1
@@ -170,3 +171,5 @@ effectLine.addEventListener('mousemove', onMouseMove);
 
 effectLine.addEventListener('mouseup', onMouseUp);
 });
+=======
+>>>>>>> 33e6e57bdcef497b735150ffe9c1a78d685df99d
