@@ -16,7 +16,7 @@ var OBJECTS_NUMBER = 25;
 var COMMENTS = ['Всё отлично!', 'В целом всё неплохо. Но не всё.', 'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.', 'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.', 'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.', 'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'];
 var NAMES = ['Артем', 'Саша', 'Дима', 'Марина', 'Даша'];
 
-fullPicture.classList.remove('hidden');
+// fullPicture.classList.remove('hidden');
 
 var generateSocialComments = function () {
   var commentsArray = [];
@@ -84,7 +84,6 @@ var fillFirstPictureElementWithDescription = function (firstElementArr) {
 fillFirstPictureElementWithDescription(generatePictureDescriptions()[0]);
 socialCommentsCount.classList.add('visually-hidden');
 commentsLoader.classList.add('visually-hidden');
-<<<<<<< HEAD
 
 //module4-task2
 //part1
@@ -145,13 +144,13 @@ var onEffectRadioButton = function () {
   var effectActiveRadioButton = document.querySelector('input[name=effect]:checked');
   effectPictureUploadPreview.className = 'img-upload__preview'; // не нашла варианта лучше обнулять классы
   effectPictureUploadPreview.classList.add('effects__preview--' + effectActiveRadioButton.value);
-}
+};
 
 effects.addEventListener('click', onEffectRadioButton, true);
 
 var effectLine = document.querySelector('.effect-level__line');
 
-effectLine.addEventListener('mousedown', function (evt) {
+effectSliderButton.addEventListener('mousedown', function (evt) {
   evt.preventDefault();
   var startX = effectSliderButton.offsetLeft; // узнаю координату кнопки относительно effectLine
 
@@ -159,17 +158,22 @@ var onMouseMove = function (evtMove) {
   evtMove.preventDefault();
   var shiftX = startX - evtMove.offsetX; // узнаем на сколько сдвинулась кнопка
   effectSliderButton.style.left = (startX - shiftX) + 'px';
+  console.log('move');
 };
 
 var onMouseUp = function (evtUp) {
   evtUp.preventDefault();
-  document.removeEventListener('mousemove', onMouseMove);
+  effectLine.removeEventListener('mousemove', onMouseMove);
   document.removeEventListener('mouseup', onMouseUp);
-}
+  console.log('up');
+};
 
 effectLine.addEventListener('mousemove', onMouseMove);
 
-effectLine.addEventListener('mouseup', onMouseUp);
+document.addEventListener('mouseup', onMouseUp);
 });
-=======
->>>>>>> 33e6e57bdcef497b735150ffe9c1a78d685df99d
+
+
+//part 3
+
+var validity = document.querySelector('.text__hashtags');
