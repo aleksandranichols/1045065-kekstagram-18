@@ -137,7 +137,9 @@ pictureEditorClose.addEventListener('keydown', function (evt) {
 var effects = document.querySelector('.effects');
 var effectSliderButton = document.querySelector('.effect-level__pin');
 var effectSliderButtonValue = document.querySelector('.effect-level__value');
+var effectLevelDepth = document.querySelector('.effect-level__depth');
 var effectPictureUploadPreview = document.querySelector('.img-upload__preview');
+var effectRadioButton = document.querySelector('input[name=effect]');
 var effectActiveRadioButton = document.querySelector('input[name=effect]:checked');
 
 var onEffectRadioButton = function () {
@@ -149,28 +151,45 @@ var onEffectRadioButton = function () {
 effects.addEventListener('click', onEffectRadioButton, true);
 
 var effectLine = document.querySelector('.effect-level__line');
+var clamp =  function (num, min, max) {
+  return num <= min ? min : num >= max ? max : num;
+};
 
 effectSliderButton.addEventListener('mousedown', function (evt) {
   evt.preventDefault();
-  var startX = effectSliderButton.offsetLeft; // узнаю координату кнопки относительно effectLine
-
-var onMouseMove = function (evtMove) {
+  var startX = evt.clientX;
+  var onMouseMove = function (evtMove) {
   evtMove.preventDefault();
-  var shiftX = startX - evtMove.offsetX; // узнаем на сколько сдвинулась кнопка
-  effectSliderButton.style.left = (startX - shiftX) + 'px';
-  console.log('move');
+  var shiftX = startX - evtMove.clientX;
+  startX = evtMove.clientX;
+  effectLevelDepth.style.width = (clamp(parseInt(effectLevelDepth.offsetWidth), 0, 453) - shiftX) + 'px'; // временное решение для ограничения пина
+  effectSliderButton.style.left = (clamp(parseInt(effectSliderButton.offsetLeft), 0, 453) - shiftX) + 'px';
+  effectSliderButtonValue.value = effectSliderButton.offsetLeft;
+
+  var filtersObject = {
+    marvin: 'invert(' + effectSliderButton.offsetLeft * 100 / 453 + '%' + ')',
+    chrome: 'grayscale(' + effectSliderButton.offsetLeft / 453 + ')',
+    sepia: 'sepia(' + effectSliderButton.offsetLeft / 453 + ')',
+    phobos: 'blur(' + effectSliderButton.offsetLeft * 3 / 453 + 'px' + ')',
+    heat: 'brightness(' + effectSliderButton.offsetLeft * 3 / 453 + ')'
+  };
+  var effectActiveRadioButton = document.querySelector('input[name=effect]:checked');
+
+  var effectCurrent = document.querySelector('.img-upload__preview.effects__preview--' + effectActiveRadioButton.value);
+
+  effectCurrent.style.filter = ('filtersObject.' + effectActiveRadioButton.value).replace(/(^"|"$)/g, '');
+  console.log(effectCurrent.style.filter);
+
 };
 
 var onMouseUp = function (evtUp) {
   evtUp.preventDefault();
-  effectLine.removeEventListener('mousemove', onMouseMove);
+  document.removeEventListener('mousemove', onMouseMove);
   document.removeEventListener('mouseup', onMouseUp);
-  console.log('up');
 };
 
-effectLine.addEventListener('mousemove', onMouseMove);
-
-document.addEventListener('mouseup', onMouseUp);
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
 });
 
 
