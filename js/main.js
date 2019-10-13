@@ -3,7 +3,7 @@
 var picturesList = document.querySelector('.pictures');
 var templateElement = document.querySelector('#picture').content.querySelector('.picture');
 var fragment = document.createDocumentFragment();
-var fullPicture = document.querySelector('.big-picture');
+// var fullPicture = document.querySelector('.big-picture');
 var fullPictureImg = document.querySelector('.big-picture__img img');
 var commentsList = document.querySelector('.social__comments');
 var socialCommentsElement = document.querySelector('.social__comment');
@@ -18,20 +18,24 @@ var NAMES = ['Артем', 'Саша', 'Дима', 'Марина', 'Даша'];
 
 // fullPicture.classList.remove('hidden');
 
+var getRandomNumberInRange = function (min, max) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+};
+
 var generateSocialComments = function () {
   var commentsArray = [];
-  for (var i = 0; i < COMMENTS.length; i++) {
+  var RANDOM_COMMENTS = [];
+  for (var i = 0; i < getRandomNumberInRange(1, COMMENTS.length); i++) {
+    RANDOM_COMMENTS.push(COMMENTS[i]);
+  }
+  for (var j = 0; j < RANDOM_COMMENTS.length; j++) {
     commentsArray.push({
       avatar: 'img/avatar-' + (getRandomNumberInRange(1, 6)) + '.svg',
-      message: COMMENTS[i],
-      name: NAMES[(getRandomNumberInRange(0, NAMES.length))]
+      message: RANDOM_COMMENTS[j],
+      name: NAMES[(getRandomNumberInRange(0, NAMES.length - 1))]
     });
   }
   return commentsArray;
-};
-
-var getRandomNumberInRange = function (min, max) {
-  return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
 var generatePictureDescriptions = function () {
@@ -41,7 +45,7 @@ var generatePictureDescriptions = function () {
       url: 'photos/' + (i + 1) + '.jpg',
       description: 'Описание',
       likes: getRandomNumberInRange(15, 200),
-      comments: generateSocialComments()[Math.floor(Math.random() * COMMENTS.length)]
+      comments: generateSocialComments()
     });
   }
   return picturesArray;
@@ -72,9 +76,16 @@ var transferSocialComments = function (commentsElement) {
   return commentElement;
 };
 
-commentsList.appendChild(transferSocialComments(generateSocialComments()[0]));
+var pushSocialComments = function () {
+  var comments = generatePictureDescriptions()[0].comments;
+  for (var i = 0; i < comments.length; i++) {
+    commentsList.appendChild(transferSocialComments(comments[i]));
+  }
+};
 
-var fillFirstPictureElementWithDescription = function (firstElementArr) {
+pushSocialComments();
+
+var fillFirstPictureElementWithDescription = function (firstElementArr) { // в задании пока просили первый элемент, поэтому и название такое. Я считаю, что функцию надо называть по тому, что она делает.
   likesCount.textContent = firstElementArr.likes;
   fullPictureImg.setAttribute('src', firstElementArr.url);
   commentsCount.textContent = 1;
@@ -85,8 +96,8 @@ fillFirstPictureElementWithDescription(generatePictureDescriptions()[0]);
 socialCommentsCount.classList.add('visually-hidden');
 commentsLoader.classList.add('visually-hidden');
 
-//module4-task2
-//part1
+// module4-task2
+// part1
 
 var uploadPictureInput = document.querySelector('#upload-file');
 var pictureEditor = document.querySelector('.img-upload__overlay');
@@ -108,13 +119,13 @@ var closePopup = function () {
 
 var onOpenEditorEscPress = function (evt) {
   if (evt.keyCode === ESC_KEYCODE) {
-  closePopup();
+    closePopup();
   }
 };
 
 var onCloseEditorEnterPress = function (evt) {
   if (evt.keyCode === ENTER_KEYCODE) {
-  openPopup();
+    openPopup();
   }
 };
 
@@ -128,71 +139,132 @@ pictureEditorClose.addEventListener('click', function () {
 
 pictureEditorClose.addEventListener('keydown', function (evt) {
   if (evt.keyCode === ESC_KEYCODE) {
-  closePopup();
+    closePopup();
   }
 });
 
-//part2
+//  part2
 
 var effects = document.querySelector('.effects');
 var effectSliderButton = document.querySelector('.effect-level__pin');
+var effectLevel = document.querySelector('.effect-level');
 var effectSliderButtonValue = document.querySelector('.effect-level__value');
 var effectLevelDepth = document.querySelector('.effect-level__depth');
 var effectPictureUploadPreview = document.querySelector('.img-upload__preview');
-var effectRadioButton = document.querySelector('input[name=effect]');
-var effectActiveRadioButton = document.querySelector('input[name=effect]:checked');
+
+// смена фильтров
 
 var onEffectRadioButton = function () {
   var effectActiveRadioButton = document.querySelector('input[name=effect]:checked');
-  effectPictureUploadPreview.className = 'img-upload__preview'; // не нашла варианта лучше обнулять классы
+  effectPictureUploadPreview.setAttribute('style', 'filter: 0');
+  effectSliderButton.style.left = '100%';
+  effectLevelDepth.style.width = '100%';
+  effectLevel.classList.remove('hidden');
+  effectPictureUploadPreview.className = 'img-upload__preview';
   effectPictureUploadPreview.classList.add('effects__preview--' + effectActiveRadioButton.value);
+  if (effectActiveRadioButton.value === 'none') {
+    effectLevel.classList.add('hidden');
+  }
 };
 
+effectLevel.classList.add('hidden');
 effects.addEventListener('click', onEffectRadioButton, true);
 
-var effectLine = document.querySelector('.effect-level__line');
-var clamp =  function (num, min, max) {
-  return num <= min ? min : num >= max ? max : num;
-};
+// изменение насыщенности фильтров при перемещении пина
 
 effectSliderButton.addEventListener('mousedown', function (evt) {
+  var SLIDER_START = 0;
+  var SLIDER_END = 453;
+  var PERCENTAGE_MAX = 100;
+  var BLUREFFECT_MAX = 3;
+  var BRIGTNESSEFFECT_MAX = 3;
+
   evt.preventDefault();
   var startX = evt.clientX;
   var onMouseMove = function (evtMove) {
-  evtMove.preventDefault();
-  var shiftX = startX - evtMove.clientX;
-  startX = evtMove.clientX;
-  effectLevelDepth.style.width = (clamp(parseInt(effectLevelDepth.offsetWidth), 0, 453) - shiftX) + 'px'; // временное решение для ограничения пина
-  effectSliderButton.style.left = (clamp(parseInt(effectSliderButton.offsetLeft), 0, 453) - shiftX) + 'px';
-  effectSliderButtonValue.value = effectSliderButton.offsetLeft;
+    evtMove.preventDefault();
+    var shiftX = startX - evtMove.clientX;
+    var clamp = function (num) {
+      if (num <= SLIDER_START) {
+        num = SLIDER_START;
+      } else if (num >= SLIDER_END) {
+        num = SLIDER_END;
+      }
+      return num;
+    };
 
-  var filtersObject = {
-    marvin: 'invert(' + effectSliderButton.offsetLeft * 100 / 453 + '%' + ')',
-    chrome: 'grayscale(' + effectSliderButton.offsetLeft / 453 + ')',
-    sepia: 'sepia(' + effectSliderButton.offsetLeft / 453 + ')',
-    phobos: 'blur(' + effectSliderButton.offsetLeft * 3 / 453 + 'px' + ')',
-    heat: 'brightness(' + effectSliderButton.offsetLeft * 3 / 453 + ')'
+    startX = evtMove.clientX;
+    effectSliderButtonValue.value = effectSliderButton.offsetLeft;
+    effectLevelDepth.style.width = (clamp(parseInt(effectLevelDepth.offsetWidth, 10)) - shiftX) + 'px'; // хз как лучше ограничить
+    effectSliderButton.style.left = (clamp(parseInt(effectSliderButton.offsetLeft, 10)) - shiftX) + 'px';
+
+    var effectActiveRadioButton = document.querySelector('input[name=effect]:checked');
+    var effectCurrent = document.querySelector('.img-upload__preview.effects__preview--' + effectActiveRadioButton.value);
+    var filtersObject = {
+      none: 'none',
+      marvin: 'invert(' + effectSliderButton.offsetLeft * PERCENTAGE_MAX / SLIDER_END + '%' + ')',
+      chrome: 'grayscale(' + effectSliderButton.offsetLeft / SLIDER_END + ')',
+      sepia: 'sepia(' + effectSliderButton.offsetLeft / SLIDER_END + ')',
+      phobos: 'blur(' + effectSliderButton.offsetLeft * BLUREFFECT_MAX / SLIDER_END + 'px' + ')',
+      heat: 'brightness(' + effectSliderButton.offsetLeft * BRIGTNESSEFFECT_MAX / SLIDER_END + ')'
+    };
+    effectCurrent.style.filter = filtersObject[effectActiveRadioButton.value];
   };
-  var effectActiveRadioButton = document.querySelector('input[name=effect]:checked');
 
-  var effectCurrent = document.querySelector('.img-upload__preview.effects__preview--' + effectActiveRadioButton.value);
-
-  effectCurrent.style.filter = ('filtersObject.' + effectActiveRadioButton.value).replace(/(^"|"$)/g, '');
-  console.log(effectCurrent.style.filter);
-
-};
-
-var onMouseUp = function (evtUp) {
-  evtUp.preventDefault();
-  document.removeEventListener('mousemove', onMouseMove);
-  document.removeEventListener('mouseup', onMouseUp);
-};
+  var onMouseUp = function (evtUp) {
+    evtUp.preventDefault();
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+  };
 
   document.addEventListener('mousemove', onMouseMove);
   document.addEventListener('mouseup', onMouseUp);
+
 });
 
+// валидация хэш-тегов
 
-//part 3
+var hashtagInput = document.querySelector('.text__hashtags');
+var pictureSubmitButton = document.querySelector('.img-upload__submit');
+var HASHTAG_LENGTH = 20;
 
-var validity = document.querySelector('.text__hashtags');
+pictureSubmitButton.addEventListener('click', function () {
+  var createArrayOutOfString = function (str) {
+    var resArray = str.split(' ');
+    return resArray;
+  };
+
+  var getInvalidities = function (invalidities) {
+    return invalidities.join('\n');
+  };
+
+  var checkValidity = function (input) {
+    var invalidities = [];
+    var addInvalidity = function (message) {
+      invalidities.push(message);
+    };
+
+    if (!input.match(/#[А-Яа-я0-9-_]+/)) {
+      addInvalidity('Your hashtags suck');
+    }
+
+    if (!input[0].match(/#/)) {
+      addInvalidity('Hashtags must start with #');
+    }
+
+    if (input.length > HASHTAG_LENGTH) {
+      addInvalidity('Hashtags must be less than 20 characters');
+    }
+
+    return getInvalidities(invalidities);
+  };
+
+  var hashtagsArray = createArrayOutOfString(hashtagInput.value.toString());
+  for (var i = 0; i < hashtagsArray.length; i++) {
+    var inputCustomValidation = [];
+    var customValidityMessage = [];
+    inputCustomValidation.push(checkValidity(hashtagsArray[i]));
+    customValidityMessage.push(inputCustomValidation);
+    hashtagInput.setCustomValidity(customValidityMessage);
+  }
+});
