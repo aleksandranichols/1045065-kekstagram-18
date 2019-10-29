@@ -6,46 +6,32 @@
   var uploadPictureInput = document.querySelector('#upload-file');
   var pictureEditor = document.querySelector('.img-upload__overlay');
   var pictureEditorClose = document.querySelector('#upload-cancel');
-  var ENTER_KEYCODE = 13;
-  var ESC_KEYCODE = 27;
 
-  var openPopup = function () {
-    pictureEditor.classList.remove('hidden');
-    document.addEventListener('keydown', onOpenEditorEscPress);
-    document.removeEventListener('keydown', onCloseEditorEnterPress);
-  };
+    window.onOpenEditorEscPress = function (evt) {
+      if (evt.keyCode === window.keycodes.esc) {
+        window.closePopup(pictureEditor);
+      }
+    };
 
-  var closePopup = function () {
-    pictureEditor.classList.add('hidden');
-    document.addEventListener('keydown', onCloseEditorEnterPress);
-    document.removeEventListener('keydown', onOpenEditorEscPress);
-  };
+    window.onCloseEditorEnterPress = function (evt) {
+      if (evt.keyCode === window.keycodes.enter) {
+        window.openPopup(pictureEditor);
+      }
+    };
 
-  var onOpenEditorEscPress = function (evt) {
-    if (evt.keyCode === ESC_KEYCODE) {
-      closePopup();
-    }
-  };
+    uploadPictureInput.addEventListener('change', function () {
+      window.openPopup(pictureEditor);
+    });
 
-  var onCloseEditorEnterPress = function (evt) {
-    if (evt.keyCode === ENTER_KEYCODE) {
-      openPopup();
-    }
-  };
+    pictureEditorClose.addEventListener('click', function () {
+      window.closePopup(pictureEditor);
+    });
 
-  uploadPictureInput.addEventListener('change', function () {
-    openPopup();
-  });
-
-  pictureEditorClose.addEventListener('click', function () {
-    closePopup();
-  });
-
-  pictureEditorClose.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === ESC_KEYCODE) {
-      closePopup();
-    }
-  });
+    pictureEditorClose.addEventListener('keydown', function (evt) {
+      if (evt.keyCode === window.keycodes.esc) {
+        window.closePopup(pictureEditor);
+      }
+    });
   var effects = document.querySelector('.effects');
   var effectLevel = document.querySelector('.effect-level');
   var effectSliderButton = document.querySelector('.effect-level__pin');
@@ -82,20 +68,20 @@
     var startX = evt.clientX;
 
     var onMouseMove = function (evtMove) {
-      if (effectSliderButton.offsetLeft > SLIDER_END) {
-        document.removeEventListener('mousemove', onMouseMove);
-        effectSliderButton.style.left = effectSliderButton.offsetLeft - (effectSliderButton.offsetLeft - SLIDER_END) + 'px';
-        effectLevelDepth.style.width = effectLevelDepth.offsetWidth - (effectLevelDepth.offsetWidth - SLIDER_END) + 'px';
-      } else if (effectSliderButton.offsetLeft < SLIDER_START) {
-        document.removeEventListener('mousemove', onMouseMove);
-        effectSliderButton.style.left = effectSliderButton.offsetLeft - (effectSliderButton.offsetLeft - SLIDER_START) + 'px';
-        effectLevelDepth.style.width = effectLevelDepth.offsetWidth - (effectLevelDepth.offsetWidth - SLIDER_START) + 'px';
+      evtMove.preventDefault();
+      var shiftX = startX - evtMove.clientX;
+      startX = evtMove.clientX;
+      var newPositionLeft = effectSliderButton.offsetLeft - shiftX;
+      if (newPositionLeft > SLIDER_END) {
+        effectSliderButton.style.left = SLIDER_END + 'px';
+        effectLevelDepth.style.width = SLIDER_END + 'px';
+      } else if (newPositionLeft < SLIDER_START) {
+        effectSliderButton.style.left = SLIDER_START + 'px';
+        effectLevelDepth.style.width = SLIDER_START + 'px';
       } else {
-        evtMove.preventDefault();
-        var shiftX = startX - evtMove.clientX;
-        startX = evtMove.clientX;
-        effectLevelDepth.style.width = (effectLevelDepth.offsetWidth - shiftX) + 'px';
-        effectSliderButton.style.left = (effectSliderButton.offsetLeft - shiftX) + 'px';
+
+        effectLevelDepth.style.width = newPositionLeft + 'px';
+        effectSliderButton.style.left = newPositionLeft + 'px';
         effectSliderButtonValue.setAttribute('value', effectSliderButton.offsetLeft);
 
         var effectActiveRadioButton = document.querySelector('input[name=effect]:checked');
