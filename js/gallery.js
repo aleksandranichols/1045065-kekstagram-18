@@ -33,18 +33,29 @@
   window.generatePictures = function(pictures) {
     var picturesFragment = document.createDocumentFragment();
     var commentsFragment = document.createDocumentFragment();
-
+    var arr = [];
+    var arr1 = [];
     for (var i = 0; i < pictures.length; i++) {
-    var x = pictures[i];
-    console.log(x);
+
+    arr.push(pictures[i].comments);
+    arr1.push(pictures[i].url);
+    console.log(arr1);
+
     picturesFragment.appendChild(transferPictureDescriptions(pictures[i]));
 
-    picturesFragment.children[i].addEventListener('click', function() {
-      commentsList.appendChild(generateComments(x.comments));
-   }, true);
-    }
+    picturesFragment.children[i].addEventListener('click', function(evt) {
+      var x = evt.target.src.split('/');
+      var y = x[x.length - 1].split('.')[0] - 1;
+      console.log(y);
+
+      commentsList.appendChild(generateComments(arr[y]));
+      arr[y] = '';
+    }, true);
+  }
+  console.log(arr);
+
     picturesList.appendChild(picturesFragment);
-    ;}
+  }
 
   window.generateComments = function(comments) {
     var commentsFragment = document.createDocumentFragment();
