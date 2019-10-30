@@ -7,31 +7,31 @@
   var pictureEditor = document.querySelector('.img-upload__overlay');
   var pictureEditorClose = document.querySelector('#upload-cancel');
 
-    window.onOpenEditorEscPress = function (evt) {
-      if (evt.keyCode === window.keycodes.esc) {
-        window.closePopup(pictureEditor);
-      }
-    };
-
-    window.onCloseEditorEnterPress = function (evt) {
-      if (evt.keyCode === window.keycodes.enter) {
-        window.openPopup(pictureEditor);
-      }
-    };
-
-    uploadPictureInput.addEventListener('change', function () {
-      window.openPopup(pictureEditor);
-    });
-
-    pictureEditorClose.addEventListener('click', function () {
+  window.onOpenEditorEscPress = function (evt) {
+    if (evt.keyCode === window.keycode.esc) {
       window.closePopup(pictureEditor);
-    });
+    }
+  };
+  window.onCloseEditorEnterPress = function (evt) {
+    if (evt.keyCode === window.keycode.enter) {
+      window.openPopup(pictureEditor);
+    }
+  };
 
-    pictureEditorClose.addEventListener('keydown', function (evt) {
-      if (evt.keyCode === window.keycodes.esc) {
-        window.closePopup(pictureEditor);
-      }
-    });
+  uploadPictureInput.addEventListener('change', function () {
+    window.openPopup(pictureEditor);
+  });
+
+  pictureEditorClose.addEventListener('click', function () {
+    window.closePopup(pictureEditor);
+  });
+
+  pictureEditorClose.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === window.keycode.esc) {
+      window.closePopup(pictureEditor);
+    }
+  });
+
   var effects = document.querySelector('.effects');
   var effectLevel = document.querySelector('.effect-level');
   var effectSliderButton = document.querySelector('.effect-level__pin');
@@ -58,11 +58,7 @@
   // изменение насыщенности фильтров при перемещении пина
 
   effectSliderButton.addEventListener('mousedown', function (evt) {
-    var SLIDER_START = 0;
-    var SLIDER_END = 453;
     var PERCENTAGE_MAX = 100;
-    var BLUREFFECT_MAX = 3;
-    var BRIGTNESSEFFECT_MAX = 3;
 
     evt.preventDefault();
     var startX = evt.clientX;
@@ -72,12 +68,12 @@
       var shiftX = startX - evtMove.clientX;
       startX = evtMove.clientX;
       var newPositionLeft = effectSliderButton.offsetLeft - shiftX;
-      if (newPositionLeft > SLIDER_END) {
-        effectSliderButton.style.left = SLIDER_END + 'px';
-        effectLevelDepth.style.width = SLIDER_END + 'px';
-      } else if (newPositionLeft < SLIDER_START) {
-        effectSliderButton.style.left = SLIDER_START + 'px';
-        effectLevelDepth.style.width = SLIDER_START + 'px';
+      if (newPositionLeft > window.sliderPoint.end) {
+        effectSliderButton.style.left = window.sliderPoint.end + 'px';
+        effectLevelDepth.style.width = window.sliderPoint.end + 'px';
+      } else if (newPositionLeft < window.sliderPoint.start) {
+        effectSliderButton.style.left = window.sliderPoint.start + 'px';
+        effectLevelDepth.style.width = window.sliderPoint.start + 'px';
       } else {
 
         effectLevelDepth.style.width = newPositionLeft + 'px';
@@ -88,11 +84,11 @@
         var effectCurrent = document.querySelector('.img-upload__preview.effects__preview--' + effectActiveRadioButton.value);
         var filtersObject = {
           none: 'none',
-          marvin: 'invert(' + effectSliderButton.offsetLeft * PERCENTAGE_MAX / SLIDER_END + '%' + ')',
-          chrome: 'grayscale(' + effectSliderButton.offsetLeft / SLIDER_END + ')',
-          sepia: 'sepia(' + effectSliderButton.offsetLeft / SLIDER_END + ')',
-          phobos: 'blur(' + effectSliderButton.offsetLeft * BLUREFFECT_MAX / SLIDER_END + 'px' + ')',
-          heat: 'brightness(' + effectSliderButton.offsetLeft * BRIGTNESSEFFECT_MAX / SLIDER_END + ')'
+          marvin: 'invert(' + effectSliderButton.offsetLeft * PERCENTAGE_MAX / window.sliderPoint.end + '%' + ')',
+          chrome: 'grayscale(' + effectSliderButton.offsetLeft / window.sliderPoint.end + ')',
+          sepia: 'sepia(' + effectSliderButton.offsetLeft / window.sliderPoint.end + ')',
+          phobos: 'blur(' + effectSliderButton.offsetLeft * window.effectPoint.blureffectmax / window.sliderPoint.end + 'px' + ')',
+          heat: 'brightness(' + effectSliderButton.offsetLeft * window.effectPoint.brightnesseffectmax / window.sliderPoint.end + ')'
         };
         effectCurrent.style.filter = filtersObject[effectActiveRadioButton.value];
       }

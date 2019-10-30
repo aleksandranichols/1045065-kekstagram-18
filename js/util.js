@@ -10,9 +10,19 @@
     return resArray;
   };
 
-  window.keycodes = {
+  window.keycode = {
     enter: 13,
     esc: 27
+  };
+
+  window.sliderPoint = {
+    start: 0,
+    end: 453
+  };
+
+  window.effectPoint = {
+    blureffectmax: 3,
+    brightnesseffectmax: 3
   };
 
   window.openPopup = function (openElement) {
