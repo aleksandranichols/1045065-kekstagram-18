@@ -6,46 +6,32 @@
   var uploadPictureInput = document.querySelector('#upload-file');
   var pictureEditor = document.querySelector('.img-upload__overlay');
   var pictureEditorClose = document.querySelector('#upload-cancel');
-  var ENTER_KEYCODE = 13;
-  var ESC_KEYCODE = 27;
 
-  var openPopup = function () {
-    pictureEditor.classList.remove('hidden');
-    document.addEventListener('keydown', onOpenEditorEscPress);
-    document.removeEventListener('keydown', onCloseEditorEnterPress);
-  };
-
-  var closePopup = function () {
-    pictureEditor.classList.add('hidden');
-    document.addEventListener('keydown', onCloseEditorEnterPress);
-    document.removeEventListener('keydown', onOpenEditorEscPress);
-  };
-
-  var onOpenEditorEscPress = function (evt) {
-    if (evt.keyCode === ESC_KEYCODE) {
-      closePopup();
+  window.onOpenEditorEscPress = function (evt) {
+    if (evt.keyCode === window.keycode.esc) {
+      window.closePopup(pictureEditor);
     }
   };
-
-  var onCloseEditorEnterPress = function (evt) {
-    if (evt.keyCode === ENTER_KEYCODE) {
-      openPopup();
+  window.onCloseEditorEnterPress = function (evt) {
+    if (evt.keyCode === window.keycode.enter) {
+      window.openPopup(pictureEditor);
     }
   };
 
   uploadPictureInput.addEventListener('change', function () {
-    openPopup();
+    window.openPopup(pictureEditor);
   });
 
   pictureEditorClose.addEventListener('click', function () {
-    closePopup();
+    window.closePopup(pictureEditor);
   });
 
   pictureEditorClose.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === ESC_KEYCODE) {
-      closePopup();
+    if (evt.keyCode === window.keycode.esc) {
+      window.closePopup(pictureEditor);
     }
   });
+
   var effects = document.querySelector('.effects');
   var effectLevel = document.querySelector('.effect-level');
   var effectSliderButton = document.querySelector('.effect-level__pin');
@@ -72,41 +58,37 @@
   // изменение насыщенности фильтров при перемещении пина
 
   effectSliderButton.addEventListener('mousedown', function (evt) {
-    var SLIDER_START = 0;
-    var SLIDER_END = 453;
     var PERCENTAGE_MAX = 100;
-    var BLUREFFECT_MAX = 3;
-    var BRIGTNESSEFFECT_MAX = 3;
 
     evt.preventDefault();
     var startX = evt.clientX;
 
     var onMouseMove = function (evtMove) {
-      if (effectSliderButton.offsetLeft > SLIDER_END) {
-        document.removeEventListener('mousemove', onMouseMove);
-        effectSliderButton.style.left = effectSliderButton.offsetLeft - (effectSliderButton.offsetLeft - SLIDER_END) + 'px';
-        effectLevelDepth.style.width = effectLevelDepth.offsetWidth - (effectLevelDepth.offsetWidth - SLIDER_END) + 'px';
-      } else if (effectSliderButton.offsetLeft < SLIDER_START) {
-        document.removeEventListener('mousemove', onMouseMove);
-        effectSliderButton.style.left = effectSliderButton.offsetLeft - (effectSliderButton.offsetLeft - SLIDER_START) + 'px';
-        effectLevelDepth.style.width = effectLevelDepth.offsetWidth - (effectLevelDepth.offsetWidth - SLIDER_START) + 'px';
+      evtMove.preventDefault();
+      var shiftX = startX - evtMove.clientX;
+      startX = evtMove.clientX;
+      var newPositionLeft = effectSliderButton.offsetLeft - shiftX;
+      if (newPositionLeft > window.sliderPoint.end) {
+        effectSliderButton.style.left = window.sliderPoint.end + 'px';
+        effectLevelDepth.style.width = window.sliderPoint.end + 'px';
+      } else if (newPositionLeft < window.sliderPoint.start) {
+        effectSliderButton.style.left = window.sliderPoint.start + 'px';
+        effectLevelDepth.style.width = window.sliderPoint.start + 'px';
       } else {
-        evtMove.preventDefault();
-        var shiftX = startX - evtMove.clientX;
-        startX = evtMove.clientX;
-        effectLevelDepth.style.width = (effectLevelDepth.offsetWidth - shiftX) + 'px';
-        effectSliderButton.style.left = (effectSliderButton.offsetLeft - shiftX) + 'px';
+
+        effectLevelDepth.style.width = newPositionLeft + 'px';
+        effectSliderButton.style.left = newPositionLeft + 'px';
         effectSliderButtonValue.setAttribute('value', effectSliderButton.offsetLeft);
 
         var effectActiveRadioButton = document.querySelector('input[name=effect]:checked');
         var effectCurrent = document.querySelector('.img-upload__preview.effects__preview--' + effectActiveRadioButton.value);
         var filtersObject = {
           none: 'none',
-          marvin: 'invert(' + effectSliderButton.offsetLeft * PERCENTAGE_MAX / SLIDER_END + '%' + ')',
-          chrome: 'grayscale(' + effectSliderButton.offsetLeft / SLIDER_END + ')',
-          sepia: 'sepia(' + effectSliderButton.offsetLeft / SLIDER_END + ')',
-          phobos: 'blur(' + effectSliderButton.offsetLeft * BLUREFFECT_MAX / SLIDER_END + 'px' + ')',
-          heat: 'brightness(' + effectSliderButton.offsetLeft * BRIGTNESSEFFECT_MAX / SLIDER_END + ')'
+          marvin: 'invert(' + effectSliderButton.offsetLeft * PERCENTAGE_MAX / window.sliderPoint.end + '%' + ')',
+          chrome: 'grayscale(' + effectSliderButton.offsetLeft / window.sliderPoint.end + ')',
+          sepia: 'sepia(' + effectSliderButton.offsetLeft / window.sliderPoint.end + ')',
+          phobos: 'blur(' + effectSliderButton.offsetLeft * window.effectPoint.blureffectmax / window.sliderPoint.end + 'px' + ')',
+          heat: 'brightness(' + effectSliderButton.offsetLeft * window.effectPoint.brightnesseffectmax / window.sliderPoint.end + ')'
         };
         effectCurrent.style.filter = filtersObject[effectActiveRadioButton.value];
       }

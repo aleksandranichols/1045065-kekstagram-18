@@ -3,93 +3,87 @@
 // галерия сайта
 
 (function () {
-  var templateElement = document.querySelector('#picture').content.querySelector('.picture');
-  var picturesList = document.querySelector('.pictures');
-  var fragment = document.createDocumentFragment();
-  // var fullPicture = document.querySelector('.big-picture');
-  var fullPictureImg = document.querySelector('.big-picture__img img');
+  window.picturesList = document.querySelector('.pictures');
+  var body = document.querySelector('body');
+  var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
+  var errorTemplate = document.querySelector('#error').content.querySelector('.error');
   var commentsList = document.querySelector('.social__comments');
   var socialCommentsElement = document.querySelector('.social__comment');
-  var commentsCount = document.querySelector('.comments-count');
-  var likesCount = document.querySelector('.likes-count');
-  var socialCaption = document.querySelector('.social__caption');
+  // var commentsCount = document.querySelector('.comments-count');
+  // var likesCount = document.querySelector('.likes-count');
+  // var socialCaption = document.querySelector('.social__caption');
   var socialCommentsCount = document.querySelector('.social__comment-count');
   var commentsLoader = document.querySelector('.comments-loader');
-  var OBJECTS_NUMBER = 25;
-  var COMMENTS = ['Всё отлично!', 'В целом всё неплохо. Но не всё.', 'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.', 'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.', 'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.', 'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'];
-  var NAMES = ['Артем', 'Саша', 'Дима', 'Марина', 'Даша'];
-
-  var generateSocialComments = function () {
-    var commentsArray = [];
-    var RANDOM_COMMENTS = [];
-    for (var i = 0; i < window.getRandomNumberInRange(1, COMMENTS.length); i++) {
-      RANDOM_COMMENTS.push(COMMENTS[i]);
-    }
-    for (var j = 0; j < RANDOM_COMMENTS.length; j++) {
-      commentsArray.push({
-        avatar: 'img/avatar-' + (window.getRandomNumberInRange(1, 6)) + '.svg',
-        message: RANDOM_COMMENTS[j],
-        name: NAMES[(window.getRandomNumberInRange(0, NAMES.length - 1))]
-      });
-    }
-    return commentsArray;
-  };
-
-  var generatePictureDescriptions = function () {
-    var picturesArray = [];
-    for (var i = 0; i < OBJECTS_NUMBER; i++) {
-      picturesArray.push({
-        url: 'photos/' + (i + 1) + '.jpg',
-        description: 'Описание',
-        likes: window.getRandomNumberInRange(15, 200),
-        comments: generateSocialComments()
-      });
-    }
-    return picturesArray;
-  };
 
   var transferPictureDescriptions = function (picturesElement) {
-    var pictureElement = templateElement.cloneNode(true);
+    var pictureElement = pictureTemplate.cloneNode(true);
     pictureElement.querySelector('.picture__img').setAttribute('src', picturesElement.url);
     pictureElement.querySelector('.picture__likes').textContent = picturesElement.likes;
     pictureElement.querySelector('.picture__comments').textContent = picturesElement.comments.length;
     return pictureElement;
   };
 
-  var pushPictureDescriptions = function () {
-    for (var i = 0; i < OBJECTS_NUMBER; i++) {
-      fragment.appendChild(transferPictureDescriptions(generatePictureDescriptions()[i]));
-    }
-  };
-
-  pushPictureDescriptions();
-  picturesList.appendChild(fragment);
-
   var transferSocialComments = function (commentsElement) {
     var commentElement = socialCommentsElement.cloneNode(true);
-    commentElement.querySelector('.social__picture').setAttribute('src', commentsElement.avatar);
-    commentElement.querySelector('.social__picture').setAttribute('alt', commentsElement.name);
-    commentElement.querySelector('.social__text').textContent = commentsElement.message;
+    commentElement.querySelector('.social__comment .social__picture').setAttribute('src', commentsElement.avatar);
+    commentElement.querySelector('.social__comment .social__picture').setAttribute('alt', commentsElement.name);
+    commentElement.querySelector('.social__comment .social__text').textContent = commentsElement.message;
     return commentElement;
   };
 
-  var pushSocialComments = function () {
-    var comments = generatePictureDescriptions()[0].comments;
+  var generateComments = function (comments) {
+    var commentsFragment = document.createDocumentFragment();
     for (var i = 0; i < comments.length; i++) {
-      commentsList.appendChild(transferSocialComments(comments[i]));
+      commentsFragment.appendChild(transferSocialComments(comments[i]));
     }
+    return commentsFragment;
   };
 
-  pushSocialComments();
+  var generatePicturesSuccess = function (pictures) {
+    var picturesFragment = document.createDocumentFragment();
+    var arr = [];
+    var arr1 = [];
+    for (var i = 0; i < pictures.length; i++) {
 
-  var fillFirstPictureElementWithDescription = function (firstElementArr) {
-    likesCount.textContent = firstElementArr.likes;
-    fullPictureImg.setAttribute('src', firstElementArr.url);
-    commentsCount.textContent = 1;
-    socialCaption.textContent = firstElementArr.description;
+      arr.push(pictures[i].comments);
+      arr1.push(pictures[i].url);
+
+      picturesFragment.appendChild(transferPictureDescriptions(pictures[i]));
+
+      picturesFragment.children[i].addEventListener('click', function (evt) {
+        var x = evt.target.src.split('/');
+        var y = x[x.length - 1].split('.')[0] - 1;
+
+        commentsList.appendChild(generateComments(arr[y]));
+        arr[y] = '';
+      }, true);
+    }
+
+    window.picturesList.appendChild(picturesFragment);
   };
 
-  fillFirstPictureElementWithDescription(generatePictureDescriptions()[0]);
+  var generatePicturesError = function (errorMessage) {
+    var errorElement = errorTemplate.cloneNode(true);
+    var errorButtonTryAgain = errorElement.querySelector('.error__button:first-child');
+    var errorButtonUpload = errorElement.querySelector('.error__button:last-child');
+    errorButtonUpload.remove();
+    errorElement.querySelector('.error__title').textContent = errorMessage;
+    body.appendChild(errorElement);
+
+    errorButtonTryAgain.addEventListener('click', function () {
+      window.downloadData(generatePicturesSuccess, generatePicturesError);
+    });
+    errorButtonTryAgain.addEventListener('keydown', function (evtkey) {
+      if (evtkey.keycode === window.keycode.enter) {
+        window.downloadData(generatePicturesSuccess, generatePicturesError);
+      }
+    });
+  };
+
   socialCommentsCount.classList.add('visually-hidden');
   commentsLoader.classList.add('visually-hidden');
+
+  window.downloadData(generatePicturesSuccess, generatePicturesError);
+  window.previewPictures(window.downloadData(generatePicturesSuccess, generatePicturesError));
+
 })();
