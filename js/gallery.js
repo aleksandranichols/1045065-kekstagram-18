@@ -32,16 +32,19 @@
 
   window.generatePictures = function(pictures) {
     var picturesFragment = document.createDocumentFragment();
-    var commentsArr = [];
-    var commentsArr1 = [];
+    var commentsFragment = document.createDocumentFragment();
+
     for (var i = 0; i < pictures.length; i++) {
+    var x = pictures[i];
+    console.log(x);
     picturesFragment.appendChild(transferPictureDescriptions(pictures[i]));
-    commentsList.appendChild(generateComments(pictures[i].comments))
+
+    picturesFragment.children[i].addEventListener('click', function() {
+      commentsList.appendChild(generateComments(x.comments));
+   }, true);
     }
-
-    console.log(generateComments(pictures[0].comments).children)
-
-    picturesList.appendChild(picturesFragment);}
+    picturesList.appendChild(picturesFragment);
+    ;}
 
   window.generateComments = function(comments) {
     var commentsFragment = document.createDocumentFragment();
