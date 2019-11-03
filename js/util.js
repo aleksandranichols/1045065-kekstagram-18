@@ -1,13 +1,39 @@
 'use strict';
 
 (function () {
-  window.getRandomNumberInRange = function (min, max) {
+  window.getRandomIntegerInRange = function (min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
+  };
+
+  window.getArrayOfRandomIntegers = function (length, min, max) {
+    var randomIntegerArr = [];
+    while (randomIntegerArr.length < length) {
+
+      var randomNumber = window.getRandomIntegerInRange(min, max);
+
+      if (randomIntegerArr.includes(randomNumber) === false) {
+        randomIntegerArr.push(randomNumber);
+      }
+    }
+    return randomIntegerArr;
   };
 
   window.createArrayOutOfString = function (str) {
     var resArray = str.split(' ');
     return resArray;
+  };
+
+  window.debounce = function (somefunction, interval) {
+    var lastTimeout = null;
+    return function () {
+      var parameters = arguments;
+      if (lastTimeout) {
+        window.clearTimeout(lastTimeout);
+      }
+      lastTimeout = window.setTimeout(function () {
+        somefunction.apply(null, parameters);
+      }, interval);
+    };
   };
 
   window.keycode = {

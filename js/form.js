@@ -42,8 +42,8 @@
   var onEffectRadioButton = function () {
     var effectActiveRadioButton = document.querySelector('input[name=effect]:checked');
     effectPictureUploadPreview.setAttribute('style', 'filter: 0');
-    effectSliderButton.style.left = 453 + 'px';
-    effectLevelDepth.style.width = 453 + 'px';
+    effectSliderButton.style.left = window.sliderPoint.end + 'px';
+    effectLevelDepth.style.width = window.sliderPoint.end + 'px';
     effectLevel.classList.remove('hidden');
     effectPictureUploadPreview.className = 'img-upload__preview';
     effectPictureUploadPreview.classList.add('effects__preview--' + effectActiveRadioButton.value);
@@ -68,16 +68,20 @@
       var shiftX = startX - evtMove.clientX;
       startX = evtMove.clientX;
       var newPositionLeft = effectSliderButton.offsetLeft - shiftX;
-      if (newPositionLeft > window.sliderPoint.end) {
-        effectSliderButton.style.left = window.sliderPoint.end + 'px';
-        effectLevelDepth.style.width = window.sliderPoint.end + 'px';
-      } else if (newPositionLeft < window.sliderPoint.start) {
-        effectSliderButton.style.left = window.sliderPoint.start + 'px';
-        effectLevelDepth.style.width = window.sliderPoint.start + 'px';
-      } else {
+      var buttonPosition;
+      var linePosition;
 
-        effectLevelDepth.style.width = newPositionLeft + 'px';
-        effectSliderButton.style.left = newPositionLeft + 'px';
+      if (newPositionLeft > window.sliderPoint.end) {
+        buttonPosition = window.sliderPoint.end + 'px';
+        linePosition = window.sliderPoint.end + 'px';
+
+      } else if (newPositionLeft < window.sliderPoint.start) {
+        buttonPosition = window.sliderPoint.start + 'px';
+        linePosition = window.sliderPoint.start + 'px';
+
+      } else {
+        linePosition = newPositionLeft + 'px';
+        buttonPosition = newPositionLeft + 'px';
         effectSliderButtonValue.setAttribute('value', effectSliderButton.offsetLeft);
 
         var effectActiveRadioButton = document.querySelector('input[name=effect]:checked');
@@ -92,6 +96,9 @@
         };
         effectCurrent.style.filter = filtersObject[effectActiveRadioButton.value];
       }
+      effectSliderButton.style.left = buttonPosition;
+      effectLevelDepth.style.width = linePosition;
+
     };
     var onMouseUp = function (evtUp) {
       evtUp.preventDefault();
