@@ -130,7 +130,7 @@
   window.generatePicturesSuccess = function (pictures) {
     var picturesFragment = document.createDocumentFragment();
     window.picturesCopy = pictures.slice();
-    window.resetGallery();
+    window.resetListofElements(window.picturesList, 'picture');
     pictures.forEach(function (element) {
       var picturesElement = transferPictureDescriptions(element);
       picturesFragment.appendChild(picturesElement);
@@ -143,7 +143,7 @@
   window.downloadData(window.generatePicturesSuccess, window.generatePicturesError);
 
   window.generateMostDiscussedPictures = function () {
-    window.resetGallery();
+    window.resetListofElements(window.picturesList, 'picture');
     var picturesFragment = document.createDocumentFragment();
 
     window.picturesCopy.sort(function (a, b) {
@@ -158,7 +158,7 @@
   };
 
   window.generateRandomPictures = function () {
-    window.resetGallery();
+    window.resetListofElements(window.picturesList, 'picture');
     var picturesFragment = document.createDocumentFragment();
     var randomPictures = window.getArrayOfRandomIntegers(NUMBER_OF_RANDOM_PICTURES, ZERO, window.picturesCopy.length - 1);
     for (var i = 0; i < NUMBER_OF_RANDOM_PICTURES; i++) {

@@ -18,9 +18,12 @@
     return randomIntegerArr;
   };
 
-  window.createArrayOutOfString = function (str) {
-    var resArray = str.split(' ');
-    return resArray;
+  window.resetListofElements = function (list, classname) {
+    var lastElement = list.lastElementChild;
+    while (lastElement.className === classname) {
+      lastElement.remove();
+      lastElement = list.lastElementChild;
+    }
   };
 
   window.debounce = function (somefunction, interval) {
@@ -39,16 +42,6 @@
   window.keycode = {
     enter: 13,
     esc: 27
-  };
-
-  window.sliderPoint = {
-    start: 0,
-    end: 453
-  };
-
-  window.effectPoint = {
-    blureffectmax: 3,
-    brightnesseffectmax: 3
   };
 
   window.openPopup = function (openElement) {

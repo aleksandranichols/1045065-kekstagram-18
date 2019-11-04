@@ -6,6 +6,22 @@
   var uploadPictureInput = document.querySelector('#upload-file');
   var pictureEditor = document.querySelector('.img-upload__overlay');
   var pictureEditorClose = document.querySelector('#upload-cancel');
+  var effects = document.querySelector('.effects');
+  var effectLevel = document.querySelector('.effect-level');
+  var effectSliderButton = document.querySelector('.effect-level__pin');
+  var effectSliderButtonValue = document.querySelector('.effect-level__value');
+  var effectLevelDepth = document.querySelector('.effect-level__depth');
+  var effectPictureUploadPreview = document.querySelector('.img-upload__preview');
+
+  window.sliderPoint = {
+    start: 0,
+    end: 453
+  };
+
+  window.effectPoint = {
+    blureffectmax: 3,
+    brightnesseffectmax: 3
+  };
 
   window.onOpenEditorEscPress = function (evt) {
     if (evt.keyCode === window.keycode.esc) {
@@ -26,18 +42,11 @@
     window.closePopup(pictureEditor);
   });
 
-  pictureEditorClose.addEventListener('keydown', function (evt) {
+  document.addEventListener('keydown', function (evt) {
     if (evt.keyCode === window.keycode.esc) {
       window.closePopup(pictureEditor);
     }
   });
-
-  var effects = document.querySelector('.effects');
-  var effectLevel = document.querySelector('.effect-level');
-  var effectSliderButton = document.querySelector('.effect-level__pin');
-  var effectSliderButtonValue = document.querySelector('.effect-level__value');
-  var effectLevelDepth = document.querySelector('.effect-level__depth');
-  var effectPictureUploadPreview = document.querySelector('.img-upload__preview');
 
   var onEffectRadioButton = function () {
     var effectActiveRadioButton = document.querySelector('input[name=effect]:checked');
@@ -86,7 +95,7 @@
 
         var effectActiveRadioButton = document.querySelector('input[name=effect]:checked');
         var effectCurrent = document.querySelector('.img-upload__preview.effects__preview--' + effectActiveRadioButton.value);
-        var filtersObject = {
+        var filter = {
           none: 'none',
           marvin: 'invert(' + effectSliderButton.offsetLeft * PERCENTAGE_MAX / window.sliderPoint.end + '%' + ')',
           chrome: 'grayscale(' + effectSliderButton.offsetLeft / window.sliderPoint.end + ')',
@@ -94,7 +103,7 @@
           phobos: 'blur(' + effectSliderButton.offsetLeft * window.effectPoint.blureffectmax / window.sliderPoint.end + 'px' + ')',
           heat: 'brightness(' + effectSliderButton.offsetLeft * window.effectPoint.brightnesseffectmax / window.sliderPoint.end + ')'
         };
-        effectCurrent.style.filter = filtersObject[effectActiveRadioButton.value];
+        effectCurrent.style.filter = filter[effectActiveRadioButton.value];
       }
       effectSliderButton.style.left = buttonPosition;
       effectLevelDepth.style.width = linePosition;

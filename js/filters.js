@@ -58,12 +58,4 @@
     }
   });
 
-  window.resetGallery = function () {
-    var lastElement = window.picturesList.lastElementChild;
-    while (lastElement.className === 'picture') {
-      lastElement.remove();
-      lastElement = window.picturesList.lastElementChild;
-    }
-  };
-
 })();
