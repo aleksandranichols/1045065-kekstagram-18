@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  var hashtagInput = document.querySelector('.text__hashtags');
+  var hashtags = document.querySelector('.text__hashtags');
   var pictureSubmitButton = document.querySelector('.img-upload__submit');
   var validator = {
     hashtagLength: 20,
@@ -9,10 +9,29 @@
     hashtagNumber: 5
   };
 
+  var displayValidationMessages = function (input, container, invalidities) {
+    var customValidityMessage = [];
+    var joinInvalidities = function (listOfInvalidities) {
+      return listOfInvalidities.join('</br>');
+    };
+    customValidityMessage.push(joinInvalidities(invalidities));
+    input.setCustomValidity(customValidityMessage);
+    input.insertAdjacentHTML('afterend', '<div class=text__' + input.name + '-error-container></div>');
+    container = document.querySelector('.text__' + input.name + '-error-container');
+    container.insertAdjacentHTML('beforeend', '<p class="text__'+ input.name + '-error">' + customValidityMessage + '</p>');
+    input.setAttribute('style', 'border: 2px solid #ff4e4e');
+    pictureSubmitButton = true;
+  }
+
+  var removeValidationMessages = function (input) {
+    input.setCustomValidity('');
+    input.removeAttribute('style', 'border: 2px solid #ff4e4e');
+    pictureSubmitButton = false;
+  }
+
   pictureSubmitButton.addEventListener('click', function (evt) {
     var hashtagsErrorContainer = document.querySelector('.text__hashtags-error-container');
     var inputCustomValidation = [];
-    var customValidityMessage = [];
     var invalidities = [];
 
     if (hashtagsErrorContainer) {
@@ -73,10 +92,8 @@
       return invalidities;
     };
 
-    var hashtagArrElements = transformInputIntoArray(hashtagInput.value.toLowerCase());
-    // var joinInvalidities = function (listOfInvalidities) {
-    //   return listOfInvalidities.join('</br>');
-    // };
+    var hashtagArrElements = transformInputIntoArray(hashtags.value.toLowerCase());
+
     var hashtagErrorMessage = [];
     for (var j = 0; j < hashtagArrElements.length; j++) {
       hashtagErrorMessage[j] = checkValidity(hashtagArrElements, hashtagArrElements[j].toString(), j);
@@ -86,16 +103,9 @@
     }
 
     if (inputCustomValidation[0].length !== 0) {
-      customValidityMessage.push(inputCustomValidation);
-      hashtagInput.setCustomValidity(customValidityMessage);
-
-      hashtagInput.insertAdjacentHTML('afterend', '<div class="text__hashtags-error-container"></div>');
-      hashtagsErrorContainer = document.querySelector('.text__hashtags-error-container');
-      hashtagsErrorContainer.insertAdjacentHTML('beforeend', '<p class="text__hashtags-error">' + customValidityMessage + '</p>');
-      pictureSubmitButton = true;
+      displayValidationMessages(hashtags, hashtagsErrorContainer, inputCustomValidation[0]);
     } else {
-      hashtagInput.setCustomValidity('');
-      pictureSubmitButton = false;
+      removeValidationMessages(hashtags);
     }
 
     if (pictureSubmitButton) {

@@ -4,9 +4,8 @@
 
 (function () {
   window.picturesList = document.querySelector('.pictures');
-  var body = document.querySelector('body');
+  window.body = document.querySelector('body');
   var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
-  var errorTemplate = document.querySelector('#error').content.querySelector('.error');
   var commentsList = document.querySelector('.social__comments');
   var fullPicture = document.querySelector('.big-picture');
   var fullPictureImg = document.querySelector('.big-picture__img img');
@@ -35,13 +34,13 @@
     var smallPicture = evt.target;
     window.openPopup(fullPicture);
     commentsList.innerText = '';
-    body.setAttribute('class', 'modal-open');
+    window.body.setAttribute('class', 'modal-open');
     fullPictureImg.setAttribute('src', smallPicture.src);
     fullPictureImg.setAttribute('alt', smallPicture.alt);
   };
 
   var closeFullPicture = function () {
-    body.removeAttribute('class');
+    window.body.removeAttribute('class');
     fullPictureImg.removeAttribute('src');
     fullPictureImg.removeAttribute('alt');
   };
@@ -80,13 +79,6 @@
     }
   });
 
-  window.onCloseEditorEnterPress = function (evt) {
-    if (evt.keyCode === window.keycode.enter) {
-      openFullPicture(evt);
-      window.openPopup(fullPicture);
-    }
-  };
-
   window.onOpenEditorEscPress = function (evtkey) {
     if (evtkey.keyCode === window.keycode.esc) {
       window.closePopup(fullPicture);
@@ -95,17 +87,13 @@
   };
 
   window.generatePicturesError = function (errorMessage) {
-    var errorElement = errorTemplate.cloneNode(true);
-    var errorButtonTryAgain = errorElement.querySelector('.error__button:first-child');
-    var errorButtonUpload = errorElement.querySelector('.error__button:last-child');
-    errorButtonUpload.remove();
-    errorElement.querySelector('.error__title').textContent = errorMessage;
-    body.appendChild(errorElement);
+    window.displayErrorMessage(errorMessage);
+    window.errorButtonUpload.remove();
 
-    errorButtonTryAgain.addEventListener('click', function () {
+    window.errorButtonTryAgain.addEventListener('click', function () {
       window.downloadData(window.generatePicturesSuccess, window.generatePicturesError);
     });
-    errorButtonTryAgain.addEventListener('keydown', function (evtkey) {
+    window.errorButtonTryAgain.addEventListener('keydown', function (evtkey) {
       if (evtkey.keycode === window.keycode.enter) {
         window.downloadData(window.generatePicturesSuccess, window.generatePicturesError);
       }
@@ -118,13 +106,8 @@
       openFullPicture(evt);
       commentsList.appendChild(generateComments(comments));
     }, true);
-
+    // написать if на проверку target
     // с enter пока не работает
-    picturesElement.addEventListener('keydown', function (evtkey, evt) {
-      if (evtkey.keyCode === window.keycode.enter) {
-        openFullPicture(evt);
-      }
-    }, true);
   };
 
   window.generatePicturesSuccess = function (pictures) {
