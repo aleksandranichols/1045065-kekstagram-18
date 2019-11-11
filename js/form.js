@@ -119,4 +119,100 @@
     document.addEventListener('mouseup', onMouseUp);
 
   });
+
+  // работа зума
+
+  var changeZoom = function (step) {
+    scaleControlValue.setAttribute('value', scaleValue + step + '%');
+    effectPictureUploadPreview.style.transform = 'scale(' + (scaleValue + step) / PERCENTAGE_MAX + ')';
+    scaleValue = parseInt(scaleControlValue.value, 10);
+  };
+
+  var doNotChangeZoom = function () {
+    scaleControlValue.setAttribute('value', scaleValue + '%');
+    effectPictureUploadPreview.style.transform = 'scale(' + (scaleValue) / PERCENTAGE_MAX + ')';
+  };
+
+  var onScaleSmallerButton = function () {
+    if (scaleValue === scale.min) {
+      doNotChangeZoom();
+    } else {
+      changeZoom(-scale.step);
+    }
+  };
+
+  var onScaleBiggerButton = function () {
+    if (scaleValue === scale.max) {
+      doNotChangeZoom();
+    } else {
+      changeZoom(scale.step);
+    }
+  };
+
+  scaleControlSmallerButton.addEventListener('click', onScaleSmallerButton);
+  scaleControlBiggerButton.addEventListener('click', onScaleBiggerButton);
+
+  // отправка картинки
+
+  var closeSuccessOrErrorMessage = function (message) {
+    pictureForm.reset();
+    window.main.removeChild(message);
+    window.closePopup(pictureEditor);
+  };
+
+  window.uploadPicturesError = function (errorMessage) {
+    window.displayErrorMessage(errorMessage);
+    var errorInner = document.querySelector('.error__inner');
+
+    window.errorButtonTryAgain.addEventListener('click', function () {
+      window.main.removeChild(window.errorMessageSection);
+    });
+
+    window.errorButtonUpload.addEventListener('click', function () {
+      closeSuccessOrErrorMessage(window.errorMessageSection);
+    });
+
+    document.addEventListener('keydown', function (evt) {
+      if (evt.keyCode === window.keycode.esc) {
+        closeSuccessOrErrorMessage(window.errorMessageSection);
+      }
+    });
+
+    window.errorMessageSection.addEventListener('click', function () {
+      closeSuccessOrErrorMessage(window.errorMessageSection);
+    });
+
+    errorInner.addEventListener('click', function (evt) {
+      evt.stopPropagation();
+    });
+  };
+
+  window.uploadPictureSuccess = function () {
+    pictureForm.reset();
+    window.closePopup(pictureEditor);
+    window.displaySuccessMessage();
+    var successInner = document.querySelector('.success__inner');
+
+    window.successButtonUpload.addEventListener('click', function () {
+      closeSuccessOrErrorMessage(window.successMessageSection);
+    });
+
+    document.addEventListener('keydown', function (evt) {
+      if (evt.keyCode === window.keycode.esc) {
+        closeSuccessOrErrorMessage(window.successMessageSection);
+      }
+    });
+
+    window.successMessageSection.addEventListener('click', function () {
+      closeSuccessOrErrorMessage(window.successMessageSectionn);
+    });
+
+    successInner.addEventListener('click', function (evt) {
+      evt.stopPropagation();
+    });
+  };
+  pictureForm.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    window.uploadData(window.uploadPictureSuccess, window.uploadPicturesError, new FormData(pictureForm));
+  });
 })();
