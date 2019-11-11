@@ -7,7 +7,6 @@
   window.body = document.querySelector('body');
   window.main = document.querySelector('main');
   var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
-  var errorTemplate = document.querySelector('#error').content.querySelector('.error');
   var commentsList = document.querySelector('.social__comments');
   var fullPicture = document.querySelector('.big-picture');
   var fullPictureSocial = document.querySelector('.big-picture__social');
@@ -45,7 +44,7 @@
   };
 
   var closeFullPicture = function () {
-    body.removeAttribute('class');
+    window.body.removeAttribute('class');
     fullPictureImg.removeAttribute('src');
     fullPictureImg.removeAttribute('alt');
     if (window.commentsCollection) {
@@ -83,13 +82,6 @@
     }
   });
 
-  window.onCloseEditorEnterPress = function (evt) {
-    if (evt.keyCode === window.keycode.enter) {
-      openFullPicture(evt);
-      window.openPopup(fullPicture);
-    }
-  };
-
   window.onOpenEditorEscPress = function (evtkey) {
     if (evtkey.keyCode === window.keycode.esc) {
       window.closePopup(fullPicture);
@@ -98,17 +90,13 @@
   };
 
   window.generatePicturesError = function (errorMessage) {
-    var errorElement = errorTemplate.cloneNode(true);
-    var errorButtonTryAgain = errorElement.querySelector('.error__button:first-child');
-    var errorButtonUpload = errorElement.querySelector('.error__button:last-child');
-    errorButtonUpload.remove();
-    errorElement.querySelector('.error__title').textContent = errorMessage;
-    body.appendChild(errorElement);
+    window.displayErrorMessage(errorMessage);
+    window.errorButtonUpload.remove();
 
-    errorButtonTryAgain.addEventListener('click', function () {
+    window.errorButtonTryAgain.addEventListener('click', function () {
       window.downloadData(window.generatePicturesSuccess, window.generatePicturesError);
     });
-    errorButtonTryAgain.addEventListener('keydown', function (evtkey) {
+    window.errorButtonTryAgain.addEventListener('keydown', function (evtkey) {
       if (evtkey.keycode === window.keycode.enter) {
         window.downloadData(window.generatePicturesSuccess, window.generatePicturesError);
       }

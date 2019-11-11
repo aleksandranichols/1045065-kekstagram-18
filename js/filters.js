@@ -18,44 +18,16 @@
 
   window.pictureFilters.addEventListener('click', onPictureFiltersButton, true);
 
-  window.pictureFilters.addEventListener('keydown', function (evtkey, evt) {
-    var activeButton = evt.target;
-    if (evtkey.keyCode === window.keycode.enter && activeButton.classList.contains('img-filters__button')) {
-      activeButton.classList.add('img-filters__button--active');
-    }
-  }, true);
-
   buttonPopular.addEventListener('click', function () {
     window.downloadData(window.debounce(window.generatePicturesSuccess, DEBOUNCE_INTERVAL), window.generatePicturesError);
-  });
-
-  buttonPopular.addEventListener('keydown', function (evtkey) {
-    evtkey.preventDefault();
-    if (evtkey.keyCode === window.keycode.enter) {
-      window.downloadData(window.debounce(window.generatePicturesSuccess, DEBOUNCE_INTERVAL), window.generatePicturesError);
-    }
   });
 
   buttonMostDiscussed.addEventListener('click', function () {
     window.downloadData(window.debounce(window.generateMostDiscussedPictures, DEBOUNCE_INTERVAL), window.generatePicturesError);
   });
 
-  buttonMostDiscussed.addEventListener('keydown', function (evtkey) {
-    evtkey.preventDefault();
-    if (evtkey.keyCode === window.keycode.enter) {
-      window.downloadData(window.debounce(window.generateMostDiscussedPictures, DEBOUNCE_INTERVAL), window.generatePicturesError);
-    }
-  });
-
   buttonRandom.addEventListener('click', function () {
     window.downloadData(window.debounce(window.generateRandomPictures, DEBOUNCE_INTERVAL), window.generatePicturesError);
-  });
-
-  buttonRandom.addEventListener('keydown', function (evtkey) {
-    evtkey.preventDefault();
-    if (evtkey.keyCode === window.keycode.enter) {
-      window.downloadData(window.debounce(window.generateRandomPictures, DEBOUNCE_INTERVAL), window.generatePicturesError);
-    }
   });
 
 })();

@@ -24,9 +24,7 @@
   window.getArrayOfRandomIntegers = function (length, min, max) {
     var randomIntegerArr = [];
     while (randomIntegerArr.length < length) {
-
       var randomNumber = window.getRandomIntegerInRange(min, max);
-
       if (randomIntegerArr.includes(randomNumber) === false) {
         randomIntegerArr.push(randomNumber);
       }
@@ -61,20 +59,13 @@
     };
   };
 
-  window.keycode = {
-    enter: 13,
-    esc: 27
-  };
-
   window.openPopup = function (openElement) {
     openElement.classList.remove('hidden');
     document.addEventListener('keydown', window.onOpenEditorEscPress);
-    document.removeEventListener('keydown', window.onCloseEditorEnterPress);
   };
 
   window.closePopup = function (closeElement) {
     closeElement.classList.add('hidden');
-    document.addEventListener('keydown', window.onCloseEditorEnterPress);
     document.removeEventListener('keydown', window.onOpenEditorEscPress);
   };
 

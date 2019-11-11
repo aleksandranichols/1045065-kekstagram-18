@@ -127,8 +127,7 @@
     if (inputCustomValidation[0].length !== 0) {
       displayValidationMessages(hashtags, hashtagsErrorContainer, inputCustomValidation);
     } else {
-      hashtagInput.setCustomValidity('');
-      pictureSubmitButton = false;
+      removeValidationMessages(hashtags);
     }
 
     if (textareaCustomValidation[0].length !== 0) {

@@ -12,6 +12,19 @@
   var effectSliderButtonValue = document.querySelector('.effect-level__value');
   var effectLevelDepth = document.querySelector('.effect-level__depth');
   var effectPictureUploadPreview = document.querySelector('.img-upload__preview');
+  var effectActiveRadioButton = document.querySelector('input[name=effect]:checked');
+  var scaleControlSmallerButton = document.querySelector('.scale__control--smaller');
+  var scaleControlBiggerButton = document.querySelector('.scale__control--bigger');
+  var scaleControlValue = document.querySelector('.scale__control--value');
+  var scaleValue = parseInt(scaleControlValue.value, 10);
+  var pictureForm = document.querySelector('.img-upload__form');
+  var PERCENTAGE_MAX = 100;
+
+  var scale = {
+    min: 25,
+    max: 100,
+    step: 25
+  };
 
   window.sliderPoint = {
     start: 0,
@@ -28,36 +41,43 @@
       window.closePopup(pictureEditor);
     }
   };
-  window.onCloseEditorEnterPress = function (evt) {
-    if (evt.keyCode === window.keycode.enter) {
-      window.openPopup(pictureEditor);
-    }
-  };
 
   uploadPictureInput.addEventListener('change', function () {
     window.openPopup(pictureEditor);
   });
 
+  var resetPictureStyles = function () {
+    effectPictureUploadPreview.setAttribute('style', 'filter: 0; transform:scale(1)');
+    scaleControlValue.setAttribute('value', '100%');
+    effectSliderButton.style.left = window.sliderPoint.end + 'px';
+    effectLevelDepth.style.width = window.sliderPoint.end + 'px';
+    scaleValue = parseInt(scaleControlValue.value, 10);
+    effectPictureUploadPreview.setAttribute('class', 'img-upload__preview');
+    effectLevel.classList.add('hidden');
+  };
+
   pictureEditorClose.addEventListener('click', function () {
     window.closePopup(pictureEditor);
+    pictureForm.reset();
+    resetPictureStyles();
   });
 
   document.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === window.keycode.esc) {
+    if (evt.keyCode === window.keycode.esc && document.activeElement !== window.hashtagInput && document.activeElement !== window.commentInput) {
       window.closePopup(pictureEditor);
+      pictureForm.reset();
+      resetPictureStyles();
     }
   });
 
+  effectPictureUploadPreview.setAttribute('style', '');
+
   var onEffectRadioButton = function () {
-    var effectActiveRadioButton = document.querySelector('input[name=effect]:checked');
-    effectPictureUploadPreview.setAttribute('style', 'filter: 0');
-    effectSliderButton.style.left = window.sliderPoint.end + 'px';
-    effectLevelDepth.style.width = window.sliderPoint.end + 'px';
-    effectLevel.classList.remove('hidden');
-    effectPictureUploadPreview.className = 'img-upload__preview';
+    effectActiveRadioButton = document.querySelector('input[name=effect]:checked');
+    resetPictureStyles();
     effectPictureUploadPreview.classList.add('effects__preview--' + effectActiveRadioButton.value);
-    if (effectActiveRadioButton.value === 'none') {
-      effectLevel.classList.add('hidden');
+    if (effectActiveRadioButton.value !== 'none') {
+      effectLevel.classList.remove('hidden');
     }
   };
 
@@ -67,7 +87,6 @@
   // изменение насыщенности фильтров при перемещении пина
 
   effectSliderButton.addEventListener('mousedown', function (evt) {
-    var PERCENTAGE_MAX = 100;
 
     evt.preventDefault();
     var startX = evt.clientX;
@@ -91,10 +110,8 @@
       } else {
         linePosition = newPositionLeft + 'px';
         buttonPosition = newPositionLeft + 'px';
-        effectSliderButtonValue.setAttribute('value', effectSliderButton.offsetLeft);
 
-        var effectActiveRadioButton = document.querySelector('input[name=effect]:checked');
-        var effectCurrent = document.querySelector('.img-upload__preview.effects__preview--' + effectActiveRadioButton.value);
+        effectActiveRadioButton = document.querySelector('input[name=effect]:checked');
         var filter = {
           none: 'none',
           marvin: 'invert(' + effectSliderButton.offsetLeft * PERCENTAGE_MAX / window.sliderPoint.end + '%' + ')',
@@ -103,7 +120,8 @@
           phobos: 'blur(' + effectSliderButton.offsetLeft * window.effectPoint.blureffectmax / window.sliderPoint.end + 'px' + ')',
           heat: 'brightness(' + effectSliderButton.offsetLeft * window.effectPoint.brightnesseffectmax / window.sliderPoint.end + ')'
         };
-        effectCurrent.style.filter = filter[effectActiveRadioButton.value];
+        effectPictureUploadPreview.style.filter = filter[effectActiveRadioButton.value];
+        effectSliderButtonValue.setAttribute('value', filter[effectActiveRadioButton.value]);
       }
       effectSliderButton.style.left = buttonPosition;
       effectLevelDepth.style.width = linePosition;
@@ -204,7 +222,7 @@
     });
 
     window.successMessageSection.addEventListener('click', function () {
-      closeSuccessOrErrorMessage(window.successMessageSectionn);
+      closeSuccessOrErrorMessage(window.successMessageSection);
     });
 
     successInner.addEventListener('click', function (evt) {
