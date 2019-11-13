@@ -2,29 +2,29 @@
 
 (function () {
 
-  window.keycode = {
-    enter: 13,
-    esc: 27
+  var Keycode = {
+    ENTER: 13,
+    ESC: 27
   };
 
-  window.method = {
-    get: 'get',
-    post: 'post'
+  var Method = {
+    GET: 'get',
+    POST: 'post'
   };
 
-  window.server = {
-    upload: 'https://js.dump.academy/kekstagram',
-    download: 'https://js.dump.academy/kekstagram/data'
+  var Server = {
+    UPLOAD: 'https://js.dump.academy/kekstagram',
+    DOWNLOAD: 'https://js.dump.academy/kekstagram/data'
   };
 
-  window.getRandomIntegerInRange = function (min, max) {
+  var getRandomIntegerInRange = function (min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
   };
 
-  window.getArrayOfRandomIntegers = function (length, min, max) {
+  var getArrayOfRandomIntegers = function (length, min, max) {
     var randomIntegerArr = [];
     while (randomIntegerArr.length < length) {
-      var randomNumber = window.getRandomIntegerInRange(min, max);
+      var randomNumber = window.util.getRandomIntegerInRange(min, max);
       if (randomIntegerArr.includes(randomNumber) === false) {
         randomIntegerArr.push(randomNumber);
       }
@@ -32,13 +32,13 @@
     return randomIntegerArr;
   };
 
-  window.transformInputIntoArray = function (input) {
+  var transformInputIntoArray = function (input) {
     var inputElements = [];
     inputElements = (input.split(' '));
     return inputElements;
   };
 
-  window.resetListofElements = function (list, classname) {
+  var resetListofElements = function (list, classname) {
     var lastElement = list.lastElementChild;
     while (lastElement.className === classname) {
       lastElement.remove();
@@ -46,7 +46,7 @@
     }
   };
 
-  window.debounce = function (somefunction, interval) {
+  var debounce = function (somefunction, interval) {
     var lastTimeout = null;
     return function () {
       var parameters = arguments;
@@ -59,32 +59,55 @@
     };
   };
 
-  window.openPopup = function (openElement) {
+  var open = function (openElement) {
     openElement.classList.remove('hidden');
-    document.addEventListener('keydown', window.onOpenEditorEscPress);
+    document.addEventListener('keydown', function (evt) {
+      if (evt.keyCode === window.util.keycode.ESC && document.activeElement !== window.validation.hashtags && document.activeElement !== window.validation.comments) {
+        window.form.onOpenEditorEscPress();
+      }
+    });
   };
 
-  window.closePopup = function (closeElement) {
+  var close = function (closeElement) {
     closeElement.classList.add('hidden');
-    document.removeEventListener('keydown', window.onOpenEditorEscPress);
+    document.removeEventListener('keydown', function (evt) {
+      if (evt.keyCode === window.util.keycode.ESC && document.activeElement !== window.validation.hashtags && document.activeElement !== window.validation.comments) {
+        window.form.onOpenEditorEscPress();
+      }
+    });
   };
 
-  window.displayErrorMessage = function (errorMessage) {
+  var displayErrorMessage = function (errorMessage) {
     var errorTemplate = document.querySelector('#error').content.querySelector('.error');
     var errorElement = errorTemplate.cloneNode(true);
     window.errorButtonTryAgain = errorElement.querySelector('.error__button:first-child');
     window.errorButtonUpload = errorElement.querySelector('.error__button:last-child');
     errorElement.querySelector('.error__title').textContent = errorMessage;
-    window.main.appendChild(errorElement);
+    window.gallery.main.appendChild(errorElement);
     window.errorMessageSection = document.querySelector('.error');
     window.errorMessageSection.style = 'z-index: 2';
   };
 
-  window.displaySuccessMessage = function () {
+  var displaySuccessMessage = function () {
     var successTemplate = document.querySelector('#success').content.querySelector('.success');
     var sucessElement = successTemplate.cloneNode(true);
     window.successButtonUpload = sucessElement.querySelector('.success__button');
-    window.main.appendChild(sucessElement);
+    window.gallery.main.appendChild(sucessElement);
     window.successMessageSection = document.querySelector('.success');
+  };
+
+  window.util = {
+    keycode: Keycode,
+    method: Method,
+    server: Server,
+    getRandomIntegerInRange: getRandomIntegerInRange,
+    getArrayOfRandomIntegers: getArrayOfRandomIntegers,
+    transformInputIntoArray: transformInputIntoArray,
+    resetListofElements: resetListofElements,
+    debounce: debounce,
+    open: open,
+    close: close,
+    displayErrorMessage: displayErrorMessage,
+    displaySuccessMessage: displaySuccessMessage
   };
 })();
