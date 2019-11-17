@@ -2,7 +2,7 @@
 
 (function () {
   var SUCCESS_CODE = 200;
-  window.upload = function (onSuccess, onError, data) {
+  var upload = function (onSuccess, onError, data) {
     var xhr = new XMLHttpRequest();
 
     xhr.addEventListener('load', function () {
@@ -14,5 +14,8 @@
     });
     xhr.open(window.util.method.POST, window.util.server.UPLOAD);
     xhr.send(data);
+  };
+  window.upload = {
+    upload: upload
   };
 })();

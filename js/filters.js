@@ -2,7 +2,7 @@
 
 (function () {
   var DEBOUNCE_INTERVAL = 500;
-  window.pictureFilters = document.querySelector('.img-filters');
+  var pictureFilters = document.querySelector('.img-filters');
   var buttonPopular = document.querySelector('#filter-popular');
   var buttonRandom = document.querySelector('#filter-random');
   var buttonMostDiscussed = document.querySelector('#filter-discussed');
@@ -16,18 +16,21 @@
     }
   };
 
-  window.pictureFilters.addEventListener('click', onPictureFiltersButton, true);
+  pictureFilters.addEventListener('click', onPictureFiltersButton, true);
 
   buttonPopular.addEventListener('click', function () {
-    window.download(window.util.debounce(window.gallery.generatePicturesSuccess, DEBOUNCE_INTERVAL), window.gallery.generatePicturesError);
+    window.download.download(window.util.debounce(window.gallery.generatePicturesSuccess, DEBOUNCE_INTERVAL), window.gallery.generatePicturesError);
   });
 
   buttonMostDiscussed.addEventListener('click', function () {
-    window.download(window.util.debounce(window.gallery.generateMostDiscussedPictures, DEBOUNCE_INTERVAL), window.gallery.generatePicturesError);
+    window.download.download(window.util.debounce(window.gallery.generateMostDiscussedPictures, DEBOUNCE_INTERVAL), window.gallery.generatePicturesError);
   });
 
   buttonRandom.addEventListener('click', function () {
-    window.download(window.util.debounce(window.gallery.generateRandomPictures, DEBOUNCE_INTERVAL), window.gallery.generatePicturesError);
+    window.download.download(window.util.debounce(window.gallery.generateRandomPictures, DEBOUNCE_INTERVAL), window.gallery.generatePicturesError);
   });
 
+  window.filters = {
+    pictureFilters: pictureFilters
+  };
 })();

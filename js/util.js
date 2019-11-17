@@ -1,6 +1,11 @@
 'use strict';
 
 (function () {
+  var errorButtonTryAgain;
+  var errorButtonUpload;
+  var errorMessageSection;
+  var successButtonUpload;
+  var successMessageSection;
 
   var Keycode = {
     ENTER: 13,
@@ -80,20 +85,20 @@
   var displayErrorMessage = function (errorMessage) {
     var errorTemplate = document.querySelector('#error').content.querySelector('.error');
     var errorElement = errorTemplate.cloneNode(true);
-    window.errorButtonTryAgain = errorElement.querySelector('.error__button:first-child');
-    window.errorButtonUpload = errorElement.querySelector('.error__button:last-child');
+    window.util.errorButtonTryAgain = errorElement.querySelector('.error__button:first-child');
+    window.util.errorButtonUpload = errorElement.querySelector('.error__button:last-child');
     errorElement.querySelector('.error__title').textContent = errorMessage;
     window.gallery.main.appendChild(errorElement);
-    window.errorMessageSection = document.querySelector('.error');
-    window.errorMessageSection.style = 'z-index: 2';
+    window.util.errorMessageSection = document.querySelector('.error');
+    errorMessageSection.style = 'z-index: 2';
   };
 
   var displaySuccessMessage = function () {
     var successTemplate = document.querySelector('#success').content.querySelector('.success');
     var sucessElement = successTemplate.cloneNode(true);
-    window.successButtonUpload = sucessElement.querySelector('.success__button');
+    window.util.successButtonUpload = sucessElement.querySelector('.success__button');
     window.gallery.main.appendChild(sucessElement);
-    window.successMessageSection = document.querySelector('.success');
+    window.util.successMessageSection = document.querySelector('.success');
   };
 
   window.util = {
@@ -108,6 +113,11 @@
     open: open,
     close: close,
     displayErrorMessage: displayErrorMessage,
-    displaySuccessMessage: displaySuccessMessage
+    displaySuccessMessage: displaySuccessMessage,
+    errorButtonTryAgain: errorButtonTryAgain,
+    errorButtonUpload: errorButtonUpload,
+    errorMessageSection: errorMessageSection,
+    successButtonUpload: successButtonUpload,
+    successMessageSection: successMessageSection
   };
 })();

@@ -4,6 +4,7 @@
 
 (function () {
   var PERCENTAGE_MAX = 100;
+  var FILE_TYPES = ['jpg', 'jpeg', 'png'];
   var uploadPictureInput = document.querySelector('#upload-file');
   var pictureEditor = document.querySelector('.img-upload__overlay');
   var pictureEditorClose = document.querySelector('#upload-cancel');
@@ -13,6 +14,7 @@
   var effectSliderButtonValue = document.querySelector('.effect-level__value');
   var effectLevelDepth = document.querySelector('.effect-level__depth');
   var effectPictureUploadPreview = document.querySelector('.img-upload__preview');
+  var effectPictureUploadPreviewImg = document.querySelector('.img-upload__preview img');
   var effectActiveRadioButton = document.querySelector('input[name=effect]:checked');
   var scaleControlSmallerButton = document.querySelector('.scale__control--smaller');
   var scaleControlBiggerButton = document.querySelector('.scale__control--bigger');
@@ -54,8 +56,26 @@
     isSuccessOrErrorMessage();
   };
 
-  uploadPictureInput.addEventListener('change', function () {
-    window.util.open(pictureEditor);
+  uploadPictureInput.addEventListener('change', function (evt) {
+    var file = uploadPictureInput.files[0];
+    var fileName = file.name.toLowerCase();
+
+    var matches = FILE_TYPES.some(function (it) {
+      return fileName.endsWith(it);
+    });
+
+    if (matches) {
+      var reader = new FileReader();
+
+      reader.addEventListener('load', function () {
+        effectPictureUploadPreviewImg.src = reader.result;
+      });
+
+      reader.readAsDataURL(file);
+      window.util.open(pictureEditor);
+    } else {
+      evt.preventDefault();
+    }
   });
 
   var resetPictureStyles = function () {
@@ -191,18 +211,18 @@
     window.util.displayErrorMessage(errorMessage);
     var errorInner = document.querySelector('.error__inner');
 
-    window.errorButtonTryAgain.addEventListener('click', function () {
-      window.gallery.main.removeChild(window.errorMessageSection);
+    window.util.errorButtonTryAgain.addEventListener('click', function () {
+      window.gallery.main.removeChild(window.util.errorMessageSection);
     });
 
-    window.errorButtonUpload.addEventListener('click', function () {
+    window.util.errorButtonUpload.addEventListener('click', function () {
       pictureForm.reset();
-      closeSuccessOrErrorMessage(window.errorMessageSection);
+      closeSuccessOrErrorMessage(window.util.errorMessageSection);
     });
 
-    window.errorMessageSection.addEventListener('click', function () {
+    window.util.errorMessageSection.addEventListener('click', function () {
       pictureForm.reset();
-      closeSuccessOrErrorMessage(window.errorMessageSection);
+      closeSuccessOrErrorMessage(window.util.errorMessageSection);
     });
 
     errorInner.addEventListener('click', function (evt) {
@@ -216,12 +236,12 @@
     window.util.displaySuccessMessage();
     var successInner = document.querySelector('.success__inner');
 
-    window.successButtonUpload.addEventListener('click', function () {
-      closeSuccessOrErrorMessage(window.successMessageSection);
+    window.util.successButtonUpload.addEventListener('click', function () {
+      closeSuccessOrErrorMessage(window.util.successMessageSection);
     });
 
-    window.successMessageSection.addEventListener('click', function () {
-      closeSuccessOrErrorMessage(window.successMessageSection);
+    window.util.successMessageSection.addEventListener('click', function () {
+      closeSuccessOrErrorMessage(window.util.successMessageSection);
     });
 
     successInner.addEventListener('click', function (evt) {
@@ -230,7 +250,7 @@
   };
   pictureForm.addEventListener('submit', function (evt) {
     evt.preventDefault();
-    window.upload(window.form.uploadPictureSuccess, window.form.uploadPicturesError, new FormData(pictureForm));
+    window.upload.upload(window.form.uploadPictureSuccess, window.form.uploadPicturesError, new FormData(pictureForm));
   });
 
   window.form = {
